@@ -35,7 +35,7 @@ const RegisterPage = () => {
         const event = JSON.parse(pendingReg);
         
         // Add to mockEvents
-        const existingEvents = JSON.parse(localStorage.getItem('mockEvents') || '[]');
+        const existingEvents = JSON.parse(localStorage.getItem('mockEvents_' + user.email) || '[]');
         if (!existingEvents.find(e => e._id === event.id)) {
           const newEvent = {
             _id: event.id,
@@ -48,7 +48,7 @@ const RegisterPage = () => {
             registeredAt: new Date().toISOString(),
             extendedFormNeeded: true
           };
-          localStorage.setItem('mockEvents', JSON.stringify([newEvent, ...existingEvents]));
+          localStorage.setItem('mockEvents_' + user.email, JSON.stringify([newEvent, ...existingEvents]));
         }
         localStorage.removeItem('pendingRegistration');
         toast.success(`Registration successful! You are now enrolled in ${event.title}!`);

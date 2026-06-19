@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 const VolunteerDashboard = () => {
   const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('mockEvents');
+    const saved = localStorage.getItem('mockEvents_' + user?.email);
     if (saved) return JSON.parse(saved);
     return [
       { _id: 'e1', title: 'Community Garden Maintenance', date: '2026-06-15T09:00', status: 'Confirmed', distance: '1.2 miles' },
@@ -58,7 +58,7 @@ const VolunteerDashboard = () => {
           distance: joinedEvent.distance
         }, ...events];
         setEvents(newEvents);
-        localStorage.setItem('mockEvents', JSON.stringify(newEvents));
+        localStorage.setItem('mockEvents_' + user?.email, JSON.stringify(newEvents));
       }
     } catch (error) {
       toast.error('Failed to join event');

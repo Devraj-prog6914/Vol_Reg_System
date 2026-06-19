@@ -19,7 +19,8 @@ const VolunteerEvents = () => {
   const [joiningId, setJoiningId] = useState(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('mockEvents');
+    if (!user?.email) return;
+    const saved = localStorage.getItem('mockEvents_' + user.email);
     if (saved) {
       setRegisteredEvents(JSON.parse(saved));
     }
@@ -43,14 +44,14 @@ const VolunteerEvents = () => {
     setJoiningId(event._id);
     try {
       await new Promise(r => setTimeout(r, 800));
-      const existing = JSON.parse(localStorage.getItem('mockEvents') || '[]');
+      const existing = JSON.parse(localStorage.getItem('mockEvents_' + user.email) || '[]');
       if (!existing.find(e => e._id === event._id)) {
         const newEvent = {
           _id: event._id, title: event.title, date: event.date, time: event.time, status: 'Confirmed', distance: event.location, category: event.category, organizer: event.organizer, registeredAt: new Date().toISOString(), extendedFormNeeded: true, img: event.img
         };
         const updated = [newEvent, ...existing];
         setRegisteredEvents(updated);
-        localStorage.setItem('mockEvents', JSON.stringify(updated));
+        localStorage.setItem('mockEvents_' + user.email, JSON.stringify(updated));
         toast.success(`Successfully registered for ${event.title}!`);
       } else {
         toast.error('You are already registered for this event.');
@@ -74,7 +75,7 @@ const VolunteerEvents = () => {
       return ev;
     });
     setRegisteredEvents(updated);
-    localStorage.setItem('mockEvents', JSON.stringify(updated));
+    localStorage.setItem('mockEvents_' + user.email, JSON.stringify(updated));
     
     setIsSubmittingForm(false);
     setExtendedFormEventId(null);
