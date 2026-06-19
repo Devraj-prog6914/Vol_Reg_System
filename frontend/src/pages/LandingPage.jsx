@@ -138,16 +138,20 @@ const LandingPage = () => {
             variants={containerVariants}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {[1, 2, 3].map((item) => (
-              <motion.div key={item} variants={itemVariants} className="bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 group">
+            {[
+              { title: 'Local Park Cleanup', img: 'https://images.unsplash.com/photo-1618477461853-cf6ed80fbfc9?q=80&w=800&auto=format&fit=crop' },
+              { title: 'Food Bank Drive', img: 'https://images.unsplash.com/photo-1593113513832-f45d4cb57fae?q=80&w=800&auto=format&fit=crop' },
+              { title: 'Elderly Tech Support', img: 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?q=80&w=800&auto=format&fit=crop' }
+            ].map((event, idx) => (
+              <motion.div key={idx} variants={itemVariants} className="bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 group">
                 <div className="h-48 bg-gray-200 overflow-hidden relative">
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent z-10"></div>
-                  <img src={`https://images.unsplash.com/photo-${1593113513832 + item}?auto=format&fit=crop&w=800&q=80`} alt="Event" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={event.img} alt="Event" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <div className="p-6">
                   <div className="text-sm text-indigo-600 font-bold mb-2">Community • This Weekend</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Local Park Cleanup Project</h3>
-                  <p className="text-gray-600 mb-4 text-sm">Join us to clean up the central park and plant new trees for the spring season.</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{event.title}</h3>
+                  <p className="text-gray-600 mb-4 text-sm">Join us to make a lasting impact in the community for the upcoming season.</p>
                   <Link to="/register" className="text-indigo-600 font-bold hover:text-indigo-700 flex items-center gap-1">Register Now <ArrowRight size={16} /></Link>
                 </div>
               </motion.div>
@@ -162,10 +166,20 @@ const LandingPage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-3xl md:text-5xl font-extrabold mb-6 text-white">Get in Touch</motion.h2>
           <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-xl text-gray-400 mb-10">Have questions about organizing an event or partnering with us? We'd love to hear from you.</motion.p>
-          <motion.form initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="max-w-md mx-auto space-y-4">
-            <input type="email" placeholder="Your Email Address" className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-            <textarea placeholder="Your Message" rows={4} className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-            <button type="button" className="w-full py-3 px-4 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 transition-colors">Send Message</button>
+          <motion.form 
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} 
+            className="max-w-md mx-auto space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              import('react-hot-toast').then(toast => {
+                toast.default.success("Message sent successfully! We'll get back to you soon.");
+                e.target.reset();
+              });
+            }}
+          >
+            <input required type="email" placeholder="Your Email Address" className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <textarea required placeholder="Your Message" rows={4} className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            <button type="submit" className="w-full py-3 px-4 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 transition-colors">Send Message</button>
           </motion.form>
         </div>
       </section>
