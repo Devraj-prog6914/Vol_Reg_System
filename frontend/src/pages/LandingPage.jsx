@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Users, Calendar, Award } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowRight, Users, Calendar, Award, MapPin, Clock, X, Map } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LandingPage = () => {
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -139,20 +142,42 @@ const LandingPage = () => {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {[
-              { title: 'Local Park Cleanup', img: 'https://images.unsplash.com/photo-1618477461853-cf6ed80fbfc9?q=80&w=800&auto=format&fit=crop' },
-              { title: 'Food Bank Drive', img: 'https://images.unsplash.com/photo-1593113513832-f45d4cb57fae?q=80&w=800&auto=format&fit=crop' },
-              { title: 'Elderly Tech Support', img: 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?q=80&w=800&auto=format&fit=crop' }
+              { 
+                id: 1,
+                title: 'Local Park Cleanup', 
+                img: 'https://images.unsplash.com/photo-1618477461853-cf6ed80fbfc9?q=80&w=800&auto=format&fit=crop',
+                date: 'June 25, 2026', time: '09:00 AM - 01:00 PM', location: 'Central City Park', category: 'Environment', spots: 12,
+                desc: 'Join us to make a lasting impact in the community by cleaning up the central park and planting new trees for the spring season. All supplies (gloves, bags, tools) will be provided. Please wear comfortable clothes and closed-toe shoes.',
+                organizer: 'GreenEarth NGO'
+              },
+              { 
+                id: 2,
+                title: 'Food Bank Drive', 
+                img: 'https://images.unsplash.com/photo-1593113513832-f45d4cb57fae?q=80&w=800&auto=format&fit=crop',
+                date: 'July 02, 2026', time: '10:00 AM - 03:00 PM', location: 'Community Center', category: 'Social Welfare', spots: 5,
+                desc: 'Help us sort, pack, and distribute food packages to families in need. We are looking for energetic volunteers to help manage the flow of donations and assist with loading vehicles.',
+                organizer: 'HelpingHands Org'
+              },
+              { 
+                id: 3,
+                title: 'Elderly Tech Support', 
+                img: 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?q=80&w=800&auto=format&fit=crop',
+                date: 'July 10, 2026', time: '02:00 PM - 05:00 PM', location: 'Sunrise Senior Home', category: 'Education', spots: 8,
+                desc: 'Spend an afternoon teaching seniors how to use smartphones, tablets, and video calling apps to connect with their families. Patience and basic tech knowledge are the only requirements!',
+                organizer: 'TechForSeniors'
+              }
             ].map((event, idx) => (
-              <motion.div key={idx} variants={itemVariants} className="bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 group">
+              <motion.div key={idx} variants={itemVariants} className="bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 group cursor-pointer hover:shadow-2xl transition-all" onClick={() => setSelectedEvent(event)}>
                 <div className="h-48 bg-gray-200 overflow-hidden relative">
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent z-10"></div>
                   <img src={event.img} alt="Event" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-indigo-700 shadow-sm">{event.category}</div>
                 </div>
                 <div className="p-6">
-                  <div className="text-sm text-indigo-600 font-bold mb-2">Community • This Weekend</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{event.title}</h3>
-                  <p className="text-gray-600 mb-4 text-sm">Join us to make a lasting impact in the community for the upcoming season.</p>
-                  <Link to="/register" className="text-indigo-600 font-bold hover:text-indigo-700 flex items-center gap-1">Register Now <ArrowRight size={16} /></Link>
+                  <div className="text-sm text-indigo-600 font-bold mb-2">{event.date} • {event.time.split(' - ')[0]}</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{event.title}</h3>
+                  <p className="text-gray-600 mb-4 text-sm line-clamp-2">{event.desc}</p>
+                  <div className="text-indigo-600 font-bold flex items-center gap-1 group-hover:gap-2 transition-all">View Full Details <ArrowRight size={16} /></div>
                 </div>
               </motion.div>
             ))}
@@ -184,6 +209,87 @@ const LandingPage = () => {
         </div>
       </section>
 
+    {/* Event Details Modal */}
+      <AnimatePresence>
+        {selectedEvent && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm overflow-y-auto"
+            onClick={() => setSelectedEvent(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden border border-white relative my-8"
+            >
+              <div className="h-64 bg-gray-200 relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent z-10"></div>
+                <img src={selectedEvent.img} alt="Event" className="w-full h-full object-cover" />
+                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 p-2 bg-black/40 hover:bg-black/60 backdrop-blur rounded-full text-white transition-colors">
+                  <X size={20} />
+                </button>
+                <div className="absolute bottom-6 left-6 z-20 text-white pr-6">
+                  <div className="bg-indigo-600 px-3 py-1 rounded-lg text-xs font-bold inline-block mb-3">{selectedEvent.category}</div>
+                  <h3 className="text-3xl font-extrabold mb-2 leading-tight">{selectedEvent.title}</h3>
+                  <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-gray-200">
+                    <span className="flex items-center gap-1.5"><Calendar size={16} /> {selectedEvent.date}</span>
+                    <span className="flex items-center gap-1.5"><Clock size={16} /> {selectedEvent.time}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="p-8">
+                <div className="grid md:grid-cols-3 gap-8">
+                  <div className="md:col-span-2 space-y-6">
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">About this Event</h4>
+                      <p className="text-gray-600 leading-relaxed">{selectedEvent.desc}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">Requirements</h4>
+                      <ul className="space-y-2 text-gray-600">
+                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div> No prior experience needed</li>
+                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div> Minimum age: 16 years</li>
+                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div> Bring a positive attitude</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                      <h4 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Event Details</h4>
+                      <div className="space-y-4">
+                        <div className="flex gap-3">
+                          <MapPin className="text-indigo-600 shrink-0" size={20} />
+                          <div>
+                            <div className="font-bold text-gray-900 text-sm">Location</div>
+                            <div className="text-gray-500 text-sm">{selectedEvent.location}</div>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <Users className="text-indigo-600 shrink-0" size={20} />
+                          <div>
+                            <div className="font-bold text-gray-900 text-sm">Organizer</div>
+                            <div className="text-gray-500 text-sm">{selectedEvent.organizer}</div>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <Award className="text-indigo-600 shrink-0" size={20} />
+                          <div>
+                            <div className="font-bold text-gray-900 text-sm">Availability</div>
+                            <div className="text-orange-600 font-bold text-sm bg-orange-50 px-2 py-0.5 rounded inline-block mt-0.5">{selectedEvent.spots} spots left</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <Link to="/login" className="w-full flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                      Login to Register
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
