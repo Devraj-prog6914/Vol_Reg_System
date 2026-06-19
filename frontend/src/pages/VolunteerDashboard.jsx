@@ -3,8 +3,10 @@ import { Calendar as CalendarIcon, Clock, Award, Star, Activity, MapPin, X, Chec
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import useAuthStore from '../store/authStore';
 
 const VolunteerDashboard = () => {
+  const { user } = useAuthStore();
   const [events, setEvents] = useState(() => {
     const saved = localStorage.getItem('mockEvents_' + user?.email);
     if (saved) return JSON.parse(saved);
