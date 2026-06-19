@@ -22,8 +22,34 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const user = await login(formData.email, formData.password);
-      toast.success('Welcome back!');
       
+      const pendingReg = localStorage.getItem('pendingRegistration');
+      if (pendingReg && user.role !== 'admin') {
+        const event = JSON.parse(pendingReg);
+        
+        // Add to mockEvents
+        const existingEvents = JSON.parse(localStorage.getItem('mockEvents') || '[]');
+        if (!existingEvents.find(e => e._id === event.id)) {
+          const newEvent = {
+            _id: event.id,
+            title: event.title,
+            date: new Date(Date.now() + 86400000).toISOString(),
+            status: 'Confirmed',
+            distance: event.location,
+            category: event.category,
+            organizer: event.organizer,
+            registeredAt: new Date().toISOString(),
+            extendedFormNeeded: true
+          };
+          localStorage.setItem('mockEvents', JSON.stringify([newEvent, ...existingEvents]));
+        }
+        localStorage.removeItem('pendingRegistration');
+        toast.success(`Welcome back! You've successfully registered for ${event.title}!`);
+        navigate('/volunteer/events');
+        return;
+      }
+
+      toast.success('Welcome back!');
       if (user.role === 'admin') {
         navigate('/admin');
       } else {

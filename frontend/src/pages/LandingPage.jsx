@@ -280,9 +280,12 @@ const LandingPage = () => {
                         </div>
                       </div>
                     </div>
-                    <Link to="/login" className="w-full flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                    <button onClick={() => {
+                      localStorage.setItem('pendingRegistration', JSON.stringify(selectedEvent));
+                      window.location.href = '/login';
+                    }} className="w-full flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
                       Login to Register
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>

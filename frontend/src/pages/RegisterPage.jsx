@@ -29,8 +29,34 @@ const RegisterPage = () => {
 
     try {
       const user = await register(formData.name, formData.email, formData.password);
-      toast.success('Registration successful!');
       
+      const pendingReg = localStorage.getItem('pendingRegistration');
+      if (pendingReg && user.role !== 'admin') {
+        const event = JSON.parse(pendingReg);
+        
+        // Add to mockEvents
+        const existingEvents = JSON.parse(localStorage.getItem('mockEvents') || '[]');
+        if (!existingEvents.find(e => e._id === event.id)) {
+          const newEvent = {
+            _id: event.id,
+            title: event.title,
+            date: new Date(Date.now() + 86400000).toISOString(),
+            status: 'Confirmed',
+            distance: event.location,
+            category: event.category,
+            organizer: event.organizer,
+            registeredAt: new Date().toISOString(),
+            extendedFormNeeded: true
+          };
+          localStorage.setItem('mockEvents', JSON.stringify([newEvent, ...existingEvents]));
+        }
+        localStorage.removeItem('pendingRegistration');
+        toast.success(`Registration successful! You are now enrolled in ${event.title}!`);
+        navigate('/volunteer/events');
+        return;
+      }
+
+      toast.success('Registration successful!');
       // Redirect based on role
       if (user.role === 'admin') {
         navigate('/admin');
